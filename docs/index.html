@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Auto Accepter</title>
+    <meta name="description" content="Free Windows app that accepts your League of Legends queue and sets up champion select for you: picks with backups per role, bans, summoner spells and rune pages.">
+    <meta name="color-scheme" content="dark">
+    <link rel="icon" type="image/png" href="icon.png">
+    <meta property="og:title" content="Auto Accepter">
+    <meta property="og:description" content="Accepts your queue and sets up champion select for you. Free for Windows.">
+    <meta property="og:image" content="https://asksom.github.io/auto-accepter-releases/app.png">
+    <style>
+        :root {
+            --bg-0: #010a13;
+            --bg-1: #091428;
+            --panel: #0a1a2f;
+            --gold-1: #f0e6d2;
+            --gold-2: #c8aa6e;
+            --gold-3: #a09b8c;
+            --gold-4: #785a28;
+            --gold-5: #463714;
+            --teal: #0ac8b9;
+            --serif: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+            --sans: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            font-family: var(--sans);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--gold-3);
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -10%, rgba(10, 200, 185, 0.12), transparent 60%),
+                linear-gradient(180deg, var(--bg-1), var(--bg-0) 60%);
+            background-color: var(--bg-0);
+            -webkit-font-smoothing: antialiased;
+        }
+        a { color: var(--gold-2); }
+        a:hover { color: var(--gold-1); }
+        img { max-width: 100%; display: block; }
+
+        .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+        /* ---------- header ---------- */
+        .nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+        .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .brand img { width: 32px; height: 32px; }
+        .brand span {
+            font-family: var(--serif); font-weight: 700; font-size: 15px;
+            letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-1);
+        }
+        .nav__links { display: flex; gap: 20px; font-size: 14px; }
+        .nav__links a { text-decoration: none; color: var(--gold-3); }
+        .nav__links a:hover { color: var(--gold-1); }
+
+        /* ---------- hero ---------- */
+        .hero { text-align: center; padding: 48px 0 32px; }
+        .hero h1 {
+            margin: 0;
+            font-family: var(--serif);
+            font-size: clamp(30px, 6vw, 52px);
+            line-height: 1.15;
+            font-weight: 700;
+            color: var(--gold-1);
+            text-wrap: balance;
+        }
+        .hero h1 em { font-style: normal; color: var(--gold-2); }
+        .hero p.lead {
+            max-width: 620px;
+            margin: 18px auto 0;
+            font-size: clamp(16px, 2.4vw, 19px);
+            text-wrap: pretty;
+        }
+
+        .download { margin-top: 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 34px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: #1a1204;
+            background: linear-gradient(180deg, #f0d99a, var(--gold-2) 55%, #a8884a);
+            border: 1px solid #f0d99a;
+            box-shadow: 0 0 0 1px var(--bg-0), 0 0 28px rgba(200, 170, 110, 0.35);
+            transition: box-shadow 0.15s, transform 0.15s;
+        }
+        .btn-download:hover { color: #1a1204; box-shadow: 0 0 0 1px var(--bg-0), 0 0 40px rgba(200, 170, 110, 0.6); }
+        .btn-download:active { transform: translateY(1px); }
+        .btn-download:focus-visible { outline: 2px solid var(--teal); outline-offset: 4px; }
+        .btn-download svg { width: 20px; height: 20px; flex-shrink: 0; }
+        .download__meta { font-size: 13px; color: var(--gold-3); }
+        .download__meta a { color: var(--gold-3); }
+        .download__meta a:hover { color: var(--gold-1); }
+
+        /* ---------- screenshot ---------- */
+        .shot {
+            margin: 40px auto 0;
+            max-width: 924px;
+            border: 1px solid var(--gold-4);
+            box-shadow: 0 0 0 1px var(--bg-0), 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 60px rgba(10, 200, 185, 0.08);
+        }
+        .shot img { width: 100%; height: auto; }
+
+        /* ---------- sections ---------- */
+        section { padding: 64px 0 0; }
+        h2 {
+            margin: 0 0 24px;
+            font-family: var(--serif);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--gold-2);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        h2::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold-4), transparent); }
+
+        .features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+        .feature {
+            padding: 20px;
+            background: linear-gradient(180deg, rgba(10, 26, 47, 0.9), rgba(9, 20, 40, 0.9));
+            border: 1px solid var(--gold-5);
+            border-top: 2px solid var(--accent, var(--gold-2));
+        }
+        .feature h3 { margin: 0 0 6px; font-size: 16px; color: var(--gold-1); }
+        .feature p { margin: 0; font-size: 14px; }
+
+        .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; counter-reset: step; }
+        .steps li {
+            counter-increment: step;
+            display: grid;
+            grid-template-columns: 36px 1fr;
+            gap: 14px;
+            align-items: start;
+            padding: 14px 16px;
+            background: rgba(1, 10, 19, 0.5);
+            border: 1px solid var(--gold-5);
+        }
+        .steps li::before {
+            content: counter(step);
+            width: 36px; height: 36px;
+            display: grid; place-items: center;
+            font-family: var(--serif); font-weight: 700; font-size: 16px;
+            color: #1a1204; background: var(--gold-2);
+        }
+        .steps strong { color: var(--gold-1); }
+        .steps p { margin: 0; font-size: 15px; }
+
+        .faq details {
+            border-bottom: 1px solid var(--gold-5);
+            padding: 14px 0;
+        }
+        .faq details:first-of-type { border-top: 1px solid var(--gold-5); }
+        .faq summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--gold-1);
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .faq summary::-webkit-details-marker { display: none; }
+        .faq summary::after { content: '+'; color: var(--gold-2); font-weight: 400; }
+        .faq details[open] summary::after { content: '\2212'; }
+        .faq summary:focus-visible { outline: 2px solid var(--teal); outline-offset: 4px; }
+        .faq details p { margin: 10px 0 0; font-size: 15px; }
+
+        footer {
+            margin-top: 72px;
+            padding: 24px 0 40px;
+            border-top: 1px solid var(--gold-5);
+            font-size: 12px;
+            line-height: 1.6;
+            color: #5b5a56;
+            text-align: center;
+        }
+        footer p { margin: 0 0 8px; }
+
+        @media (max-width: 760px) {
+            .features { grid-template-columns: 1fr; }
+            .nav__links { display: none; }
+            .hero { padding-top: 24px; }
+            .btn-download { padding: 14px 22px; letter-spacing: 0.1em; }
+            section { padding-top: 48px; }
+        }
+        @media (min-width: 761px) and (max-width: 960px) {
+            .features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <header class="nav">
+        <a class="brand" href="#top" id="top">
+            <img src="icon.png" alt="" width="32" height="32">
+            <span>Auto Accepter</span>
+        </a>
+        <nav class="nav__links" aria-label="Sections">
+            <a href="#features">Features</a>
+            <a href="#install">Install</a>
+            <a href="#faq">FAQ</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="hero">
+            <h1>Never miss a queue pop.<br><em>Walk into champ select ready.</em></h1>
+            <p class="lead">
+                Auto Accepter is a small, free Windows app that accepts your League of Legends queue and sets up
+                champion select for you: picks with backups for every role, your ban, summoner spells and rune pages.
+            </p>
+
+            <div class="download">
+                <a class="btn-download" id="download-btn"
+                   href="https://github.com/asksom/auto-accepter-releases/releases/latest">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 3v12M6 10l6 6 6-6M4 20h16"/>
+                    </svg>
+                    Download for Windows
+                </a>
+                <div class="download__meta" id="download-meta">
+                    Free · Windows 10 and 11 · Updates itself
+                </div>
+            </div>
+
+            <div class="shot">
+                <img src="app.png" width="924" height="681"
+                     alt="The Auto Accepter window: role tabs with a pick, two backups and a ban, summoner spells, auto-accept switches, lock-in style and saved rune pages.">
+            </div>
+        </div>
+
+        <section id="features">
+            <h2>What it does</h2>
+            <div class="features">
+                <div class="feature" style="--accent: var(--teal)">
+                    <h3>Accepts the queue</h3>
+                    <p>The match is accepted the moment it pops, so you can grab a drink while you wait.</p>
+                </div>
+                <div class="feature">
+                    <h3>Picks for every role</h3>
+                    <p>Set a pick and two backups for Top, Jungle, Mid, Bot and Support. If your champion is banned or taken, the next one is used.</p>
+                </div>
+                <div class="feature" style="--accent: #e84057">
+                    <h3>Bans</h3>
+                    <p>Your ban is hovered and locked on your turn, and it skips any champion a teammate is hovering.</p>
+                </div>
+                <div class="feature">
+                    <h3>Summoner spells</h3>
+                    <p>Flash and Smite for jungle, Teleport for top: spells are set per role automatically.</p>
+                </div>
+                <div class="feature">
+                    <h3>Rune pages</h3>
+                    <p>Save a rune page for a champion once. When you lock that champion in, the page is set for you.</p>
+                </div>
+                <div class="feature" style="--accent: var(--teal)">
+                    <h3>Your choice of lock-in</h3>
+                    <p>Lock in right away, wait until the last seconds, or only hover and lock in yourself.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="install">
+            <h2>Get started</h2>
+            <ol class="steps">
+                <li><p><strong>Download and run the installer.</strong> Windows may say it protected your PC because the app isn't signed yet. Click <strong>More info</strong>, then <strong>Run anyway</strong>.</p></li>
+                <li><p><strong>Open the League client and log in.</strong> The bar at the top turns green when the app is connected.</p></li>
+                <li><p><strong>Choose your champions, ban and spells.</strong> Auto Accept is on from the start, and your setup is remembered next time.</p></li>
+            </ol>
+        </section>
+
+        <section id="faq" class="faq">
+            <h2>Questions</h2>
+            <details>
+                <summary>Is it free?</summary>
+                <p>Yes, completely free.</p>
+            </details>
+            <details>
+                <summary>How does it get updates?</summary>
+                <p>The installed app checks for new versions on start and every few hours, downloads them in the background and asks you to restart.</p>
+            </details>
+            <details>
+                <summary>Does it work on Mac?</summary>
+                <p>No, it's Windows only for now.</p>
+            </details>
+            <details>
+                <summary>Where are my settings stored?</summary>
+                <p>Only on your PC. The app talks to the League client on your own computer and doesn't send your settings anywhere.</p>
+            </details>
+            <details>
+                <summary>Is there a version without an installer?</summary>
+                <p>Yes, <a id="portable-link" href="https://github.com/asksom/auto-accepter-releases/releases/latest">download the portable zip</a>, unzip it and run <strong>Auto Accepter.exe</strong>. The portable version doesn't update itself.</p>
+            </details>
+        </section>
+    </main>
+
+    <footer>
+        <p>
+            Auto Accepter isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or
+            anyone officially involved in producing or managing Riot Games properties. Riot Games, and all
+            associated properties are trademarks or registered trademarks of Riot Games, Inc.
+        </p>
+        <p><a href="https://github.com/asksom/auto-accepter-releases/releases">All releases</a></p>
+    </footer>
+</div>
+
+<script>
+    // Point the buttons straight at the newest installer. If GitHub can't be reached, the links
+    // keep pointing at the latest release page, which works too.
+    (async () => {
+        try {
+            const res = await fetch('https://api.github.com/repos/asksom/auto-accepter-releases/releases/latest');
+            if (!res.ok) return;
+            const release = await res.json();
+            const setup = release.assets.find(a => /^AutoAccepter-Setup-.*\.exe$/.test(a.name));
+            const portable = release.assets.find(a => /-portable\.zip$/.test(a.name));
+            const version = release.tag_name.replace(/^v/, '');
+            if (setup) {
+                document.getElementById('download-btn').href = setup.browser_download_url;
+                const mb = Math.round(setup.size / 1024 / 1024);
+                document.getElementById('download-meta').textContent =
+                    `Version ${version} · ${mb} MB · Free · Windows 10 and 11`;
+            }
+            if (portable) document.getElementById('portable-link').href = portable.browser_download_url;
+        } catch (e) { /* keep the fallback links */ }
+    })();
+</script>
+</body>
+</html>
